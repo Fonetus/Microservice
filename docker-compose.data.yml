@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cinema_postgres
+    environment:
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_secret_password
+      POSTGRES_DB: cinema_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - data_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: cinema_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - data_net
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: cinema_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - data_net
+
+volumes:
+  postgres_data:
+
+networks:
+  data_net:
+    driver: bridge
+    name: cinema_data_net  # Фиксированное имя
