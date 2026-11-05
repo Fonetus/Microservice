@@ -1,0 +1,22 @@
+services:
+  booking-service:
+    build: .
+    container_name: cinema_booking_app
+    ports:
+      - "8000:8000"
+    environment:
+      # Подключаемся по IP из сети data_net
+      - DB_HOST=cinema_postgres
+      - REDIS_HOST=cinema_redis
+      - RABBITMQ_HOST=cinema_rabbitmq
+    networks:
+      - internal_net
+      - data_net  # Подключаемся к сети хранилищ
+
+networks:
+  internal_net:
+    driver: bridge
+    name: cinema_internal_net
+  data_net:
+    external: true
+    name: cinema_data_net
