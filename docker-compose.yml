@@ -1,3 +1,7 @@
+# Базовая конфигурация для локальной разработки
+# Для production с сегментацией сетей используйте:
+# docker-compose.data.yml + docker-compose.internal.yml
+
 services:
   booking-service:
     build: .
