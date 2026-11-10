@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: cinema_postgres
+    environment:
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_secret_password
+      POSTGRES_DB: cinema_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      data_net:
+        ipv4_address: 10.10.3.2
+    cap_add:
+      - NET_ADMIN
+    entrypoint: >
+      sh -c "
+        iptables -A OUTPUT -d 10.10.2.0/28 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.3 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.4 -j DROP &&
+        docker-entrypoint.sh postgres
+      "
+
+  redis:
+    image: redis:7-alpine
+    container_name: cinema_redis
+    ports:
+      - "6379:6379"
+    networks:
+      data_net:
+        ipv4_address: 10.10.3.3
+    cap_add:
+      - NET_ADMIN
+    entrypoint: >
+      sh -c "
+        iptables -A OUTPUT -d 10.10.2.0/28 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.2 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.4 -j DROP &&
+        docker-entrypoint.sh redis-server
+      "
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: cinema_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      data_net:
+        ipv4_address: 10.10.3.4
+    cap_add:
+      - NET_ADMIN
+    entrypoint: >
+      sh -c "
+        iptables -A OUTPUT -d 10.10.2.0/28 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.2 -j DROP &&
+        iptables -A OUTPUT -d 10.10.3.3 -j DROP &&
+        docker-entrypoint.sh rabbitmq-server
+      "
+
+volumes:
+  postgres_data:
+
+networks:
+  data_net:
+    driver: bridge
+    name: cinema_data_net
+    ipam:
+      config:
+        - subnet: 10.10.3.0/28

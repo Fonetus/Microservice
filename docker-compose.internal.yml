@@ -1,0 +1,26 @@
+services:
+  booking-service:
+    build: .
+    container_name: cinema_booking_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=10.10.3.2
+      - REDIS_HOST=10.10.3.3
+      - RABBITMQ_HOST=10.10.3.4
+    networks:
+      internal_net:
+        ipv4_address: 10.10.2.2
+      data_net:
+        ipv4_address: 10.10.3.5
+
+networks:
+  internal_net:
+    driver: bridge
+    name: cinema_internal_net
+    ipam:
+      config:
+        - subnet: 10.10.2.0/28
+  data_net:
+    external: true
+    name: cinema_data_net
