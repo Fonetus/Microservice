@@ -140,7 +140,7 @@ async def create_movie(movie: MovieCreate):
     except Exception as e:
         logger.error(f"Failed to publish event: {e}")
 
-    return row
+    return dict(row)
 
 
 # --- ENDPOINT 2: Чтение (Read) ---
