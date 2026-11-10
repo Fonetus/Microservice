@@ -13,21 +13,10 @@ services:
         ipv4_address: 10.10.2.2
       data_net:
         ipv4_address: 10.10.3.5
-    restart: always  # Автоматический перезапуск при падении
-    healthcheck:     # Проверка работоспособности
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    restart: always
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-networks:
-  internal_net:
-    driver: bridge
-    name: cinema_internal_net
-    ipam:
-      config:
-        - subnet: 10.10.2.0/28
-  data_net:
-    external: true
-    name: cinema_data_net
