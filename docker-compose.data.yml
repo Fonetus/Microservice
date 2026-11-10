@@ -10,11 +10,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backups:/backups  # Для бэкапов
     networks:
       data_net:
         ipv4_address: 10.10.3.2
-    restart: always  # Автоматический перезапуск при падении
+    restart: always  #  ОБЯЗАТЕЛЬНО ДОБАВИТЬ
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U cinema_user -d cinema_db"]
       interval: 30s
@@ -40,7 +39,7 @@ services:
     networks:
       data_net:
         ipv4_address: 10.10.3.3
-    restart: always
+    restart: always  #  ОБЯЗАТЕЛЬНО ДОБАВИТЬ
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -69,7 +68,7 @@ services:
     networks:
       data_net:
         ipv4_address: 10.10.3.4
-    restart: always
+    restart: always  # ОБЯЗАТЕЛЬНО ДОБАВИТЬ
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 30s
