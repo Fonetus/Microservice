@@ -20,3 +20,15 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+# Сети должны быть объявлены здесь!
+networks:
+  internal_net:
+    driver: bridge
+    name: cinema_internal_net
+    ipam:
+      config:
+        - subnet: 10.10.2.0/28
+  data_net:
+    external: true
+    name: cinema_data_net
