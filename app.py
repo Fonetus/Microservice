@@ -107,6 +107,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Cinema Booking Service", lifespan=lifespan)
 
 
+# --- Health check endpoint ---
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
 # --- ENDPOINT 1: Запись (Create) ---
 @app.post("/movies", response_model=MovieResponse)
 async def create_movie(movie: MovieCreate):
