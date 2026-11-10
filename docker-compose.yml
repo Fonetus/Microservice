@@ -1,0 +1,45 @@
+services:
+  booking-service:
+    build: .
+    container_name: cinema_booking_app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: cinema_postgres
+    environment:
+      POSTGRES_USER: cinema_user
+      POSTGRES_PASSWORD: cinema_secret_password
+      POSTGRES_DB: cinema_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: cinema_redis
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: cinema_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+
+volumes:
+  postgres_data:
